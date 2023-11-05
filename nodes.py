@@ -9,6 +9,7 @@ import math
 import time
 import random
 
+from aiohttp import web
 from PIL import Image, ImageOps
 from PIL.PngImagePlugin import PngInfo
 import numpy as np
@@ -1716,6 +1717,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
 }
 
 EXTENSION_WEB_DIRS = {}
+EXTENSION_ROUTES = {}
 
 def load_custom_node(module_path, ignore=set()):
     module_name = os.path.basename(module_path)
@@ -1738,6 +1740,14 @@ def load_custom_node(module_path, ignore=set()):
             web_dir = os.path.abspath(os.path.join(module_dir, getattr(module, "WEB_DIRECTORY")))
             if os.path.isdir(web_dir):
                 EXTENSION_WEB_DIRS[module_name] = web_dir
+
+        if hasattr(module, "ROUTES") and getattr(module, "ROUTES") is not None:
+            routes = module.ROUTES
+            if not isinstance(routes, web.RouteTableDef):
+                print(f"Not registering ROUTES for module {module_path}: expected a RouteTableDef but got a {type(routes)}")
+            else:
+                EXTENSION_ROUTES[module_name] = routes
+                print("Registered custom routes for module", module_name)
 
         if hasattr(module, "NODE_CLASS_MAPPINGS") and getattr(module, "NODE_CLASS_MAPPINGS") is not None:
             for name in module.NODE_CLASS_MAPPINGS:

@@ -8,6 +8,7 @@ import folder_paths
 import execution
 import uuid
 import urllib
+import urllib.parse
 import json
 import glob
 import struct
@@ -525,9 +526,20 @@ class PromptServer():
                 web.static('/extensions/' + urllib.parse.quote(name), dir, follow_symlinks=True),
             ])
 
+        if nodes.EXTENSION_ROUTES:
+            extensions_subapp = web.Application()
+            for name, route_tbl in nodes.EXTENSION_ROUTES.items():
+                basename = os.path.basename(name)
+                node_subapp = web.Application()
+                node_subapp.router.add_routes(route_tbl)
+                extensions_subapp.add_subapp('/' + urllib.parse.quote(basename), node_subapp)
+
+            self.app.add_subapp('/custom_nodes', extensions_subapp)
+
         self.app.add_routes([
             web.static('/', self.web_root, follow_symlinks=True),
         ])
+        print("Routes", "\n".join(str(x) for x in (self.app.router.routes())))
 
     def get_queue_info(self):
         prompt_info = {}
