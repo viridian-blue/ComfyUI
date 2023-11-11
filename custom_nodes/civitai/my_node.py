@@ -319,7 +319,7 @@ class CivitaiGalleryControlNetLoader(CivitaiGalleryMixin):
     RETURN_TYPES = ("CONTROL_NET",)
     FUNCTION = "load_controlnet"
 
-    CATEGORY = "loaders"
+    CATEGORY = "CivitAI"
 
     def load_controlnet(self, model_version_id, exact_version_id=None):
         if exact_version_id:
