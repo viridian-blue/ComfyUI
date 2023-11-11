@@ -14,3 +14,4 @@ opencv-python
 torchvision
 numexpr
 pandas
+imageio-ffmpeg
