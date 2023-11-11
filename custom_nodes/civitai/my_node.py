@@ -110,6 +110,7 @@ cache = Path.home() / ".cache" / "comfy-civitai"
 checkpoints = cache / "checkpoints"
 loras = cache / "loras"
 thumbnails = cache / "thumbnails"
+controlnet = cache / "controlnet"
 
 ses = requests.Session()
 ses.headers["Authorization"] = f"Bearer {os.environ.get('CIVITAI_API_KEY')}"
@@ -312,6 +313,8 @@ class CivitaiGalleryLoraLoader(CivitaiGalleryMixin):
 
 
 class CivitaiGalleryControlNetLoader(CivitaiGalleryMixin):
+    cache_dir = controlnet
+
     @classmethod
     def INPUT_TYPES(s):
         return {"required": { "exact_version_id": ("STRING", {"default": ""}), "model_version_id": ("CIVITAI_CONTROLNET", {"default": ""} )}}
@@ -325,7 +328,7 @@ class CivitaiGalleryControlNetLoader(CivitaiGalleryMixin):
         if exact_version_id:
             model_version_id = exact_version_id
 
-        controlnet_path = self.download_if_not_exist(model_version_id, "LORA")
+        controlnet_path = self.download_if_not_exist(model_version_id, "Controlnet")
         controlnet_path_str = str(controlnet_path.resolve())
         controlnet = comfy.controlnet.load_controlnet(controlnet_path_str)
         return (controlnet,)
