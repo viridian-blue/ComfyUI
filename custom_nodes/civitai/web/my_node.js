@@ -419,6 +419,28 @@ const ext = {
 
 				return res;
 			},
+			CIVITAI_CONTROLNET(node, inputName, inputData, app) {
+				let widget = new CivitaiModelGalleryWidget(node, inputName, inputData, app, "Controlnet");
+				let res = { widget: node.addCustomWidget(widget) };
+
+				const w0 = node.widgets[0];
+				if (w0.name === "exact_version_id") {
+					widget.exactVersionSource = w0;
+				}
+				
+				const onRemoved = node.onRemoved;
+				node.onRemoved = function() {
+					widget.onRemoved();
+					if (onRemoved) {
+						onRemoved.call(this, ...arguments);
+					}
+				}
+
+				if(inputData[1].dynamicPrompts != undefined)
+					res.widget.dynamicPrompts = inputData[1].dynamicPrompts;
+
+				return res;
+			},
 		}
 	},
 };

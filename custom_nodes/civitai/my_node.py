@@ -100,6 +100,7 @@ from comfy.utils import ProgressBar
 from functools import lru_cache
 import comfy.utils
 import comfy.sd
+import comfy.controlnet
 from PIL import Image, ImageOps
 import base64
 from io import BytesIO
@@ -309,3 +310,22 @@ class CivitaiGalleryLoraLoader(CivitaiGalleryMixin):
         return {"result": (model_lora, clip_lora), "ui": ui}
 
 
+
+class CivitaiGalleryControlNetLoader(CivitaiGalleryMixin):
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": { "exact_version_id": ("STRING", {"default": ""}), "model_version_id": ("CIVITAI_CONTROLNET", {"default": ""} )}}
+
+    RETURN_TYPES = ("CONTROL_NET",)
+    FUNCTION = "load_controlnet"
+
+    CATEGORY = "loaders"
+
+    def load_controlnet(self, model_version_id, exact_version_id=None):
+        if exact_version_id:
+            model_version_id = exact_version_id
+
+        controlnet_path = self.download_if_not_exist(model_version_id, "LORA")
+        controlnet_path_str = str(controlnet_path.resolve())
+        controlnet = comfy.controlnet.load_controlnet(controlnet_path_str)
+        return (controlnet,)

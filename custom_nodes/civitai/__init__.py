@@ -4,12 +4,14 @@ from civitai.my_node import *
 NODE_CLASS_MAPPINGS = {
     "CivitaiGalleryCheckpointLoader": CivitaiGalleryCheckpointLoader,
     "CivitaiGalleryLoraLoader": CivitaiGalleryLoraLoader,
+    "CivitaiGalleryControlNetLoader": CivitaiGalleryControlNetLoader,
 }
 
 # A dictionary that contains the friendly/humanly readable titles for the nodes
 NODE_DISPLAY_NAME_MAPPINGS = {
     "CivitaiGalleryCheckpointLoader": "CivitAI Checkpoint Gallery",
     "CivitaiGalleryLoraLoader": "CivitAI Lora Gallery",
+    "CivitaiGalleryControlNetLoader": "CivitAI Control Net Gallery",
 }
 
 WEB_DIRECTORY = "web"
