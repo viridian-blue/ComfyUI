@@ -195,7 +195,11 @@ class CivitaiGalleryMixin:
         target_dir.mkdir(parents=True, exist_ok=True)
         download_resp = ses.get(url, params=params, stream=True)
         download_resp.raise_for_status()
-        size = int(download_resp.headers["Content-Length"])
+        try:
+            size = int(download_resp.headers["Content-Length"])
+        except KeyError:
+            size = None
+
         if filename is None:
             disposition = download_resp.headers["Content-Disposition"]
             parsed_parts = [x.strip() for x in disposition.split(";")]
@@ -209,12 +213,19 @@ class CivitaiGalleryMixin:
         tmp_dl = target_file.with_suffix(".part")
         if progress_bar:
             progress_bar.update_absolute(0, size)
+
+        dl_progress = 0
+        est_size = size if size is not None else 1<<24
             
         with tmp_dl.open("wb") as f:
             for chunk in download_resp.iter_content(chunk_size=1<<22):
                 f.write(chunk)
+                dl_progress += len(chunk)
+                if dl_progress > est_size:
+                    est_size *= 2
                 if progress_bar:
-                    progress_bar.update(len(chunk))
+                    progress_bar.update_absolute(dl_progress, est_size)
+
         tmp_dl.rename(target_file)
         return target_file
 
