@@ -138,7 +138,9 @@ class CivitaiGalleryMixin:
         cls.validate_type(model_version_id, type)
         download_url = cls.get_download_url(model_version_id)
         params = cls.get_download_params(model_version_id)
-        target_file = cls.download_file(download_url, params, target_dir)
+        pbar = ProgressBar(1)
+        pbar.current
+        target_file = cls.download_file(download_url, params, target_dir, progress_bar=pbar)
         return target_file
     
     @classmethod
